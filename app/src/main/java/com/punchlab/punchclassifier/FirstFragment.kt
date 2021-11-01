@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -25,7 +26,8 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.button_first).setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            Snackbar.make(view, "Replace with video process action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
         }
     }
 }
