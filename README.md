@@ -1,4 +1,4 @@
-# PuchClassifier
+# PunchClassifier
 
 Android application for punch video analys.
 
