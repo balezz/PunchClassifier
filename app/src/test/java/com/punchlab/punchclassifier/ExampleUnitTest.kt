@@ -1,4 +1,4 @@
-package com.punchlab.puchclassifier
+package com.punchlab.punchclassifier
 
 import org.junit.Test
 

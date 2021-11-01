@@ -1,4 +1,4 @@
-package com.punchlab.puchclassifier.data
+package com.punchlab.punchclassifier.data
 
 import android.graphics.PointF
 

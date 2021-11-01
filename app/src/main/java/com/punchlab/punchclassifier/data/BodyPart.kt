@@ -1,4 +1,4 @@
-package com.punchlab.puchclassifier.data
+package com.punchlab.punchclassifier.data
 
 enum class BodyPart(val position: Int) {
     NOSE(0),

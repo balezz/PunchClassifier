@@ -1,4 +1,4 @@
-package com.punchlab.puchclassifier
+package com.punchlab.punchclassifier
 
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
