@@ -12,7 +12,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.math.pow
 
-object Utils {
+object EvalUtils {
 
     /**
      * Assert whether the detected person from the image match with the expected result.
