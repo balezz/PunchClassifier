@@ -2,12 +2,10 @@ package com.punchlab.punchclassifier
 
 import android.graphics.*
 import android.media.ImageReader
-import android.media.MediaDataSource
 import android.media.MediaMetadataRetriever
 
 import android.media.MediaPlayer
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
@@ -127,7 +125,23 @@ object EvalUtils {
 
 
     private fun distance(point1: PointF, point2: PointF): Float {
-
         return ((point1.x - point2.x).pow(2) + (point1.y - point2.y).pow(2)).pow(0.5f)
+    }
+
+
+    /** Extract key points from Person and prepare for tflite model:
+     * normalize to bitmap width and height,
+     * subtract middle point b/w left and right hips */
+    fun prepareKeyPoints(person: Person, height: Int, width: Int): FloatArray {
+        val keyPointsF = person.keyPoints.map { it.coordinate}.toMutableList()
+        val lHip = keyPointsF[11]
+        val rHip = keyPointsF[12]
+        val mPoint = PointF((lHip.x + rHip.x) / 2, (lHip.y + rHip.y) / 2)
+        val flatKP = keyPointsF.flatMap {
+            listOf((it.y - mPoint.y) / height, (it.x - mPoint.x) / width) }.toMutableList()
+        flatKP.add(mPoint.y)
+        flatKP.add(mPoint.x)
+        assert(flatKP.size == 36)
+        return flatKP.toFloatArray()
     }
 }
