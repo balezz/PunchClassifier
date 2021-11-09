@@ -2,6 +2,7 @@ package com.punchlab.punchclassifier
 
 import android.content.Context
 import android.graphics.PointF
+import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.punchlab.punchclassifier.data.BodyPart
@@ -20,8 +21,11 @@ class MovenetLightningTest {
     companion object {
         private const val TEST_INPUT_IMAGE1 = "image1.png"
         private const val TEST_INPUT_IMAGE2 = "image2.jpg"
+        private const val TEST_INPUT_VIDEO = "id1_jab_2.mp4"
         private const val ACCEPTABLE_ERROR = 21f
+        private const val TAG = "EvalUtils"
     }
+
 
     private lateinit var poseDetector: PoseDetector
     private lateinit var appContext: Context
@@ -67,5 +71,21 @@ class MovenetLightningTest {
             expectedDetectionResult[1],
             ACCEPTABLE_ERROR
         )
+    }
+
+    @Test
+    fun testPoseEstimationResultWithVideo() {
+        var startTime = System.nanoTime()
+        // too long time, 2 sec for 30 frames
+        val input = EvalUtils.loadVideoAssetMediaRetriever(TEST_INPUT_VIDEO)
+        var endTime = System.nanoTime()
+        Log.d(TAG, "Bitmap List len: ${input?.size}, " +
+                "time: ${(endTime - startTime)/1000_000} ms")
+        startTime = System.nanoTime()
+        val personList = input.map{ poseDetector.estimateSinglePose(it) }
+        endTime = System.nanoTime()
+        Log.d(TAG, "Pose estimation time: ${(endTime - startTime) / 1000_1000} ms")
+        Log.d(TAG, "First person: ${personList.first()}")
+        Log.d(TAG, "Last person: ${personList.last()}")
     }
 }

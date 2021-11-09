@@ -25,9 +25,5 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.button_first).setOnClickListener {
-            Snackbar.make(view, "Replace with video process action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
     }
 }
