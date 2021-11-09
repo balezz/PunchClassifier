@@ -1,5 +1,7 @@
-chair
-cobra
-dog
-tree
-warrior
+NoP
+Jab
+Cross
+Left hook
+Right hook
+Left uppercut
+Right uppercut

@@ -22,7 +22,7 @@ import com.punchlab.punchclassifier.ml.MoveNet
 @RunWith(AndroidJUnit4::class)
 class VisualizationTest {
     companion object {
-        private const val TEST_INPUT_IMAGE = "image2.jpg"
+        private const val TEST_INPUT_IMAGE = "image3.jpg"
     }
 
     private lateinit var appContext: Context

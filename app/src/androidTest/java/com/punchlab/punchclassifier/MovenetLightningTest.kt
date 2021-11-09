@@ -20,9 +20,9 @@ class MovenetLightningTest {
 
     companion object {
         private const val TEST_INPUT_IMAGE1 = "image1.png"
-        private const val TEST_INPUT_IMAGE2 = "image2.jpg"
+        private const val TEST_INPUT_IMAGE3 = "image3.jpg"
         private const val TEST_INPUT_VIDEO = "id1_jab_2.mp4"
-        private const val ACCEPTABLE_ERROR = 21f
+        private const val ACCEPTABLE_ERROR = 20f
         private const val TAG = "EvalUtils"
     }
 
@@ -57,18 +57,14 @@ class MovenetLightningTest {
     }
 
     @Test
-    fun testPoseEstimationResultWithImage2() {
-        val input = EvalUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE2)
+    fun testPoseEstimationResultWithImage3() {
+        val input = EvalUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE3)
 
-        // As Movenet use previous frame to optimize detection result, we run it multiple times
-        // using the same image to improve result.
-        poseDetector.estimateSinglePose(input)
-        poseDetector.estimateSinglePose(input)
-        poseDetector.estimateSinglePose(input)
+
         val person = poseDetector.estimateSinglePose(input)
         EvalUtils.assertPoseDetectionResult(
             person,
-            expectedDetectionResult[1],
+            expectedDetectionResult[2],
             ACCEPTABLE_ERROR
         )
     }
@@ -81,11 +77,11 @@ class MovenetLightningTest {
         var endTime = System.nanoTime()
         Log.d(TAG, "Bitmap List len: ${input?.size}, " +
                 "time: ${(endTime - startTime)/1000_000} ms")
+
         startTime = System.nanoTime()
         val personList = input.map{ poseDetector.estimateSinglePose(it) }
         endTime = System.nanoTime()
         Log.d(TAG, "Pose estimation time: ${(endTime - startTime) / 1000_1000} ms")
-        Log.d(TAG, "First person: ${personList.first()}")
-        Log.d(TAG, "Last person: ${personList.last()}")
+
     }
 }
