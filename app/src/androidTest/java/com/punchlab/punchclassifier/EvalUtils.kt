@@ -1,11 +1,8 @@
 package com.punchlab.punchclassifier
 
 import android.graphics.*
-import android.media.ImageReader
 import android.media.MediaMetadataRetriever
 
-import android.media.MediaPlayer
-import android.os.Handler
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
@@ -15,20 +12,13 @@ import com.punchlab.punchclassifier.data.Person
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
 
 object EvalUtils {
 
-    private lateinit var yuvConverter: YuvToRgbConverter
     private val out = mutableListOf<Bitmap>()
-
-    /** [Handler] corresponding to [imageReaderThread] */
-
-    private const val PREVIEW_WIDTH = 640
-    private const val PREVIEW_HEIGHT = 480
-    private const val NUM_VIDEO_FRAMES = 30
+    private const val NUM_VIDEO_FRAMES = 64
     private const val TAG = "EvalUtils"
 
     /**
@@ -63,41 +53,16 @@ object EvalUtils {
         return BitmapFactory.decodeStream(testInput)
     }
 
-    /** Load an video from assets folder using its name. */
-    fun loadVideoAssetImageReader(name: String): List<Bitmap> {
-
-        val testContext = InstrumentationRegistry.getInstrumentation().context
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val afd = testContext.assets.openFd(name)
-        Log.d(TAG, "Asset file descriptor: $afd")
-
-        yuvConverter = YuvToRgbConverter(targetContext)
-
-        val imageReader = ImageReader.newInstance(
-                PREVIEW_WIDTH, PREVIEW_HEIGHT, ImageFormat.YUV_420_888, 32)
-
-        val mediaPlayer = MediaPlayer()
-        mediaPlayer.setSurface(imageReader.surface)
-        mediaPlayer.setDataSource(afd)
-
-        mediaPlayer.prepare()
-        mediaPlayer.start()
-        TimeUnit.MILLISECONDS.sleep(2000)
-        mediaPlayer.pause()
-        mediaPlayer.release()
-
-
-        val imageBitmap = imageReader.acquireNextImage()
-        return out
-    }
-
-    fun loadVideoAssetMediaRetriever(name: String): List<Bitmap> {
+    fun loadVideoAssetWithMediaRetriever(name: String): List<Bitmap> {
         val retriever = MediaMetadataRetriever()
         val testContext = InstrumentationRegistry.getInstrumentation().context
         val afd = testContext.assets.openFd(name)
         Log.d(TAG, "Asset file descriptor: $afd")
         retriever.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-        return retriever.getFramesAtIndex(0, NUM_VIDEO_FRAMES)
+        val bitmapList = retriever.getFramesAtIndex(0, NUM_VIDEO_FRAMES)
+        Log.d(TAG, "List size = ${bitmapList.size}, " +
+                "width = ${bitmapList[0].width}, height = ${bitmapList[0].height}")
+        return bitmapList
     }
 
     /** Load csv from assets folder */

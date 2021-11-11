@@ -34,7 +34,7 @@ class PunchRnnClassifierTest {
 
         @Test
         fun testPunchClassifier() {
-            val input = EvalUtils.loadVideoAssetMediaRetriever(TEST_INPUT_VIDEO)
+            val input = EvalUtils.loadVideoAssetWithMediaRetriever(TEST_INPUT_VIDEO)
             val height = input[0].height
             val width = input[0].width
             val personList = input.map{ poseDetector.estimateSinglePose(it) }

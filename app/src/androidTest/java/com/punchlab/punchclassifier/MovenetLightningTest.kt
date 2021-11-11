@@ -59,8 +59,6 @@ class MovenetLightningTest {
     @Test
     fun testPoseEstimationResultWithImage3() {
         val input = EvalUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE3)
-
-
         val person = poseDetector.estimateSinglePose(input)
         EvalUtils.assertPoseDetectionResult(
             person,
@@ -73,15 +71,26 @@ class MovenetLightningTest {
     fun testPoseEstimationResultWithVideo() {
         var startTime = System.nanoTime()
         // too long time, 2 sec for 30 frames
-        val input = EvalUtils.loadVideoAssetMediaRetriever(TEST_INPUT_VIDEO)
+        val input = EvalUtils.loadVideoAssetWithMediaRetriever(TEST_INPUT_VIDEO)
         var endTime = System.nanoTime()
-        Log.d(TAG, "Bitmap List len: ${input?.size}, " +
+        Log.d(TAG, "Bitmap List len: ${input.size}, " +
                 "time: ${(endTime - startTime)/1000_000} ms")
-
         startTime = System.nanoTime()
         val personList = input.map{ poseDetector.estimateSinglePose(it) }
         endTime = System.nanoTime()
         Log.d(TAG, "Pose estimation time: ${(endTime - startTime) / 1000_1000} ms")
+        assert(personList.isNotEmpty())
+    }
+
+    @Test
+    fun testResultWithVideoMediaCodec() {
+        val testContext = InstrumentationRegistry.getInstrumentation().context
+        val decoderWrapper = MediaDecoderWrapper(testContext, appContext, TEST_INPUT_VIDEO)
+        decoderWrapper.run()
+        val bitmapList = decoderWrapper.bitmapList
+        Log.d(TAG, "List size = ${bitmapList.size}, " +
+                "width = ${bitmapList[0].width}, height = ${bitmapList[0].height}")
+        assert(decoderWrapper.bitmapList.isNotEmpty())
 
     }
 }
