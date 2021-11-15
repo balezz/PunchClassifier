@@ -13,6 +13,7 @@ import com.punchlab.punchclassifier.ml.PoseDetector
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 
 
 @RunWith(AndroidJUnit4::class)
@@ -21,9 +22,10 @@ class MovenetLightningTest {
     companion object {
         private const val TEST_INPUT_IMAGE1 = "image1.png"
         private const val TEST_INPUT_IMAGE3 = "image3.jpg"
-        private const val TEST_INPUT_VIDEO = "id1_jab_2.mp4"
+        private const val TEST_INPUT_VIDEO_1 = "id1_jab_2.mp4"
+        private const val TEST_INPUT_VIDEO_2 = "id1_jab_2_cut.mp4"
         private const val ACCEPTABLE_ERROR = 20f
-        private const val TAG = "EvalUtils"
+        private const val TAG = "MovenetLightningTest"
     }
 
 
@@ -71,7 +73,7 @@ class MovenetLightningTest {
     fun testPoseEstimationResultWithVideo() {
         var startTime = System.nanoTime()
         // too long time, 2 sec for 30 frames
-        val input = EvalUtils.loadVideoAssetWithMediaRetriever(TEST_INPUT_VIDEO)
+        val input = EvalUtils.loadVideoAssetWithMediaRetriever(TEST_INPUT_VIDEO_1)
         var endTime = System.nanoTime()
         Log.d(TAG, "Bitmap List len: ${input.size}, " +
                 "time: ${(endTime - startTime)/1000_000} ms")
@@ -85,12 +87,14 @@ class MovenetLightningTest {
     @Test
     fun testResultWithVideoMediaCodec() {
         val testContext = InstrumentationRegistry.getInstrumentation().context
-        val decoderWrapper = MediaDecoderWrapper(testContext, appContext, TEST_INPUT_VIDEO)
-        decoderWrapper.run()
-        val bitmapList = decoderWrapper.bitmapList
+        val decoder = DecoderAsync(testContext, appContext, TEST_INPUT_VIDEO_1)
+        decoder.run()
+        TimeUnit.SECONDS.sleep(25)
+        val bitmapList = decoder.bitmapList
+        assert(decoder.bitmapList.isNotEmpty())
+
         Log.d(TAG, "List size = ${bitmapList.size}, " +
                 "width = ${bitmapList[0].width}, height = ${bitmapList[0].height}")
-        assert(decoderWrapper.bitmapList.isNotEmpty())
 
     }
 }
