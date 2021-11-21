@@ -87,7 +87,7 @@ class MovenetLightningTest {
     @Test
     fun testResultWithVideoMediaCodec() {
         val testContext = InstrumentationRegistry.getInstrumentation().context
-        val decoder = DecoderAsync(testContext, appContext, TEST_INPUT_VIDEO_1)
+        val decoder = TestDecoderAsync(testContext, appContext, TEST_INPUT_VIDEO_1)
         decoder.run()
         TimeUnit.SECONDS.sleep(25)
         val bitmapList = decoder.bitmapList

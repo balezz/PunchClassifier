@@ -10,7 +10,7 @@ import android.os.Looper
 import android.util.Log
 import java.util.concurrent.TimeUnit
 
-class DecoderAsync(testContext: Context, appContext: Context, fileName: String) {
+class TestDecoderAsync(testContext: Context, appContext: Context, fileName: String) {
     companion object {
         private const val TARGET_WIDTH = 384
         private const val TARGET_HEIGHT = 256

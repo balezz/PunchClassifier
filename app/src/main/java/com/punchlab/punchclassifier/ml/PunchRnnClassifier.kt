@@ -33,7 +33,7 @@ class PunchRnnClassifier(
         }
     }
 
-    fun classify(keyPoints: Array<FloatArray>): List<Int?> {
+    fun classify(keyPoints: List<FloatArray>): List<Int> {
         // Preprocess the pose estimation result to a array shape (1, 30, 36)
         Log.d(TAG, "Input shape: ${inputShape.contentToString()}, " +
                        "Output shape: ${outputShape.contentToString()}")
@@ -42,10 +42,10 @@ class PunchRnnClassifier(
         // Postprocess the model output to human readable class names
         val outputTensor = Array(outputShape[1]){FloatArray(outputShape[2])}
         repeat(outputTensor.size) { FloatArray(outputShape[2]) }
-        interpreter.run(arrayOf(keyPoints), arrayOf(outputTensor))
+        interpreter.run(arrayOf(keyPoints.toTypedArray()), arrayOf(outputTensor))
 
         return outputTensor
-            .map { floatArray -> floatArray.withIndex().maxByOrNull { it.value }?.index }
+            .map { floatArray -> floatArray.withIndex().maxByOrNull { it.value }?.index!! }
     }
 
     fun close() {
