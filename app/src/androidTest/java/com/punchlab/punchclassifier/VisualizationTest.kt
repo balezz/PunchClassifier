@@ -32,7 +32,7 @@ class VisualizationTest {
     fun setup() {
         // Context of the app under test.
         appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        inputBitmap = EvalUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE)
+        inputBitmap = TestUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE)
     }
 
     @Test

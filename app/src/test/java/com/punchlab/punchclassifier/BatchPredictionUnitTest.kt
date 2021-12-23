@@ -1,6 +1,7 @@
 package com.punchlab.punchclassifier
 
 import android.graphics.PointF
+import com.punchlab.punchclassifier.converters.ConverterUtils.splitByZeros
 import com.punchlab.punchclassifier.data.BodyPart
 import com.punchlab.punchclassifier.data.KeyPoint
 import com.punchlab.punchclassifier.data.Person
@@ -17,7 +18,7 @@ import kotlin.random.Random
  */
 class BatchPredictionUnitTest {
 
-    private fun makeRandomList(numPerson: Int): List<Person> {
+    private fun makeRandomPersonList(numPerson: Int): List<Person> {
         // fill  List<Person> random values
         val mockPersonArray = mutableListOf<Person>()
         for (n in 0 until numPerson) {
@@ -57,12 +58,19 @@ class BatchPredictionUnitTest {
     /** List<Person> -> Array<Int> */
     @Test
     fun batchPrediction() {
-        val personList = makeRandomList(60)
+        val personList = makeRandomPersonList(60)
         val listPredict = mockPredict(personList)
         val batchPredict = mockBatchPredict(personList)
         for (i in listPredict.indices ) {
             assertEquals(batchPredict[i], listPredict[i])
         }
+    }
+
+    @Test
+    fun testSplitByZeros() {
+        val punchIdxs = listOf(1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,3,3,1,1,0,0,0,0,0,1,1,0,0,0)
+        val result = punchIdxs.splitByZeros(10)
+        assert(result == listOf(Pair(8, 19)))
     }
 
 }

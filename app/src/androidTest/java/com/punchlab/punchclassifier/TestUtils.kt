@@ -15,7 +15,7 @@ import java.io.InputStreamReader
 import kotlin.math.pow
 
 
-object EvalUtils {
+object TestUtils {
 
     private val out = mutableListOf<Bitmap>()
     private const val NUM_VIDEO_FRAMES = 64

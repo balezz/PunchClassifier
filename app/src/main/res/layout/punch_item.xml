@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/image_punch"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="centerCrop"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:srcCompat="@drawable/punch_1"
+            />
+
+        <TextView
+            android:id="@+id/text_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/punch_type"
+            android:paddingStart="8dp"
+            tools:text = "Punch Type"
+            app:layout_constraintTop_toTopOf="@id/image_punch"
+            app:layout_constraintStart_toEndOf="@id/image_punch"
+            />
+
+        <TextView
+            android:id="@+id/text_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:paddingStart="8dp"
+            tools:text = "Duration"
+            app:layout_constraintTop_toBottomOf="@+id/text_name"
+            app:layout_constraintStart_toEndOf="@id/image_punch"
+            />
+
+        <TextView
+            android:id="@+id/text_quality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:paddingStart="8dp"
+            tools:text = "Quality"
+            app:layout_constraintTop_toBottomOf="@+id/text_duration"
+            app:layout_constraintStart_toEndOf="@id/image_punch"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

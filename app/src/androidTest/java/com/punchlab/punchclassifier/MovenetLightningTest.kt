@@ -38,12 +38,12 @@ class MovenetLightningTest {
         appContext = InstrumentationRegistry.getInstrumentation().targetContext
         poseDetector = MoveNet.create(appContext, Device.CPU, ModelType.Lightning)
         expectedDetectionResult =
-            EvalUtils.loadCSVAsset("pose_landmark_truth.csv")
+            TestUtils.loadCSVAsset("pose_landmark_truth.csv")
     }
 
     @Test
     fun testPoseEstimationResultWithImage1() {
-        val input = EvalUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE1)
+        val input = TestUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE1)
 
         // As Movenet use previous frame to optimize detection result, we run it multiple times
         // using the same image to improve result.
@@ -51,7 +51,7 @@ class MovenetLightningTest {
         poseDetector.estimateSinglePose(input)
         poseDetector.estimateSinglePose(input)
         val person = poseDetector.estimateSinglePose(input)
-        EvalUtils.assertPoseDetectionResult(
+        TestUtils.assertPoseDetectionResult(
             person,
             expectedDetectionResult[0],
             ACCEPTABLE_ERROR
@@ -60,9 +60,9 @@ class MovenetLightningTest {
 
     @Test
     fun testPoseEstimationResultWithImage3() {
-        val input = EvalUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE3)
+        val input = TestUtils.loadBitmapAssetByName(TEST_INPUT_IMAGE3)
         val person = poseDetector.estimateSinglePose(input)
-        EvalUtils.assertPoseDetectionResult(
+        TestUtils.assertPoseDetectionResult(
             person,
             expectedDetectionResult[2],
             ACCEPTABLE_ERROR
@@ -73,7 +73,7 @@ class MovenetLightningTest {
     fun testPoseEstimationResultWithVideo() {
         var startTime = System.nanoTime()
         // too long time, 2 sec for 30 frames
-        val input = EvalUtils.loadVideoAssetWithMediaRetriever(TEST_INPUT_VIDEO_1)
+        val input = TestUtils.loadVideoAssetWithMediaRetriever(TEST_INPUT_VIDEO_1)
         var endTime = System.nanoTime()
         Log.d(TAG, "Bitmap List len: ${input.size}, " +
                 "time: ${(endTime - startTime)/1000_000} ms")

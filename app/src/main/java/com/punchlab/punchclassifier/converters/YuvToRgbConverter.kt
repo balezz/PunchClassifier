@@ -1,4 +1,4 @@
-package com.punchlab.punchclassifier
+package com.punchlab.punchclassifier.converters
 
 import android.content.Context
 import android.graphics.Bitmap
