@@ -1,55 +1,68 @@
 package com.punchlab.punchclassifier.ui
 
 import android.app.Application
+import android.media.MediaExtractor
 import android.net.Uri
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import androidx.work.*
 import com.punchlab.punchclassifier.data.Punch
-import com.punchlab.punchclassifier.converters.VideoToPersonConverter
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.punchlab.punchclassifier.KEY_VIDEO_URI
-import com.punchlab.punchclassifier.workers.VideoToPersonWorker
+import com.punchlab.punchclassifier.PunchApplication
+import com.punchlab.punchclassifier.converters.ConverterWorker
+import com.punchlab.punchclassifier.data.VideoSample
+import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
-class SharedViewModel(application: Application): ViewModel() {
+class SharedViewModel(private val application: Application): ViewModel() {
 
     private val workManager = WorkManager.getInstance(application)
-    val videoProcessor = VideoToPersonConverter.getInstance(application)
+    private val videoSampleDao = (application as PunchApplication).database.videoSampleDao()
+    private val punchDao = (application as PunchApplication).database.punchDao()
 
-    private var _punchList = MutableLiveData<List<Punch>>()
-    val punchList get() = _punchList
+    val allVideoSamples:
+            LiveData<List<VideoSample>> = videoSampleDao.getVideoSamples().asLiveData()
+
+    var punchList = MutableLiveData<List<Punch>>()
 
     private var _progress = MutableLiveData<Int>()
     val progress get() = _progress
 
-    private var _notification = MutableLiveData<String>("")
+    private var _notification = MutableLiveData("")
     val notification get() = _notification
 
-    private var currentVideoUri: Uri? = null
-    fun setCurrentVideoUri(uri: Uri?) {
-        currentVideoUri = uri
+    private var currentVideoUri: String? = null
+
+    fun setCurrentVideoUri(uriString: String){ currentVideoUri = uriString }
+
+
+    fun putVideoSampleInDatabase(uri: Uri): VideoSample {
+        val videoSample = getNewVideoSample(uri)
+        viewModelScope.launch { videoSampleDao.insert(videoSample) }
+        return videoSample
     }
 
+    // 0 - 100
     fun setProgress(progress: Int){
         _progress.postValue(progress)
     }
 
     fun startProcessing() {
-        _punchList.value = mutableListOf()
-        val inputData = createInputDataForUri()
-        val videoToPunchRequest = OneTimeWorkRequest.Builder(VideoToPersonWorker::class.java)
-            .setInputData(inputData)
-            .build()
-        val continuation = workManager.beginWith(videoToPunchRequest)
-        continuation.enqueue()
+        for (vs in allVideoSamples.value!!){
+            if (vs.uri == currentVideoUri.toString()) return
+        }
+        startWorker()
     }
 
     fun makeToast(s: String) {
         _notification.postValue(s)
+    }
+
+    private fun startWorker(){
+        val inputData = createInputDataForUri()
+        val videoToPunchRequest = OneTimeWorkRequest.Builder(ConverterWorker::class.java)
+            .setInputData(inputData)
+            .build()
+        workManager.enqueue(videoToPunchRequest)
     }
 
     private fun createInputDataForUri(): Data {
@@ -60,12 +73,30 @@ class SharedViewModel(application: Application): ViewModel() {
         return builder.build()
     }
 
+    private fun getNewVideoSample(uri: Uri): VideoSample{
+        val extractor = MediaExtractor()
+        extractor.setDataSource(application.applicationContext, uri, null)
+        extractor.selectTrack(0)
+        val outputFormat = extractor.getTrackFormat(0)
+        val frameTotalNumber = outputFormat.getInteger("frame-count")
+
+        return VideoSample(
+            uri = uri.toString(),
+            duration = frameTotalNumber)
+    }
+
+    fun getPunchListFromDatabase(videoId: Long) {
+        viewModelScope.launch {
+            punchList.value = punchDao.getPunchListByVideoId(videoId)
+        }
+    }
+
     companion object {
         private const val TAG = "SharedViewModel"
 
     }
 
-    class SharedViewModelFactory(private val application: Application): ViewModelProvider.Factory {
+    class SharedViewModelFactory(private val application: PunchApplication): ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(SharedViewModel::class.java)) {
                 SharedViewModel(application) as T

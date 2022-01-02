@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp">
+
+    <ImageView
+        android:id="@+id/image_video_sample"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="@string/punch_video_sample"
+
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/punch_1" />
+
+    <TextView
+        android:id="@+id/video_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:paddingStart="8dp"
+        android:text="@string/video_uri"
+
+        app:layout_constraintStart_toEndOf="@id/image_video_sample"
+        app:layout_constraintTop_toTopOf="@id/image_video_sample"
+        tools:text="Video uri" />
+
+    <TextView
+        android:id="@+id/video_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:paddingStart="8dp"
+        android:text="@string/_0s"
+
+        app:layout_constraintStart_toEndOf="@id/image_video_sample"
+        app:layout_constraintTop_toBottomOf="@+id/video_name"
+        tools:text="0s" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

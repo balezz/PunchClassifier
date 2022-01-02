@@ -2,13 +2,12 @@
     <string name="app_name">Punch Classifier</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label">Punch Videos</string>
+    <string name="second_fragment_label">Punch List</string>
     <string name="next">Process</string>
     <string name="previous">Previous</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="second_fragment_title">Punch list</string>
     <string name="load_text">Record your punch video</string>
     <string name="duration">"Duration: %1$s ms"</string>
     <string name="quality">"Quality: %1$s "</string>
@@ -18,4 +17,7 @@
     <string name="fab_record_video">Record Video</string>
     <string name="fab_open_video">Open video</string>
     <string name="punch_type">Punch type</string>
+    <string name="punch_video_sample">Punch video sample</string>
+    <string name="_0s">0s</string>
+    <string name="video_uri">Video uri</string>
 </resources>

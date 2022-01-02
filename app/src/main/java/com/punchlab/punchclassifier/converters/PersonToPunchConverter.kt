@@ -1,37 +1,43 @@
 package com.punchlab.punchclassifier.converters
 
-import android.app.Application
+import android.content.Context
 import android.graphics.PointF
+import com.punchlab.punchclassifier.TARGET_HEIGHT
+import com.punchlab.punchclassifier.TARGET_WIDTH
 import com.punchlab.punchclassifier.converters.ConverterUtils.splitByZeros
 import com.punchlab.punchclassifier.data.Person
 import com.punchlab.punchclassifier.data.Punch
+import com.punchlab.punchclassifier.data.fromBounds
 import com.punchlab.punchclassifier.ml.PunchRnnClassifier
 
-class PersonToPunchConverter(application: Application) {
+class PersonToPunchConverter(context: Context) {
 
-    private val punchClassifier = PunchRnnClassifier.create(application)
+    private val punchClassifier = PunchRnnClassifier.create(context)
 
     private val punchIdxList = mutableListOf<Int>()
     private val punchList = mutableListOf<Punch>()
 
-    private fun processPunches(personList: List<Person>,
-                               width: Int,
-                               height: Int,
-                               sampleSize: Int = 30,
-                               step: Int = 30) {
-        val pointsList = personList.map{extractKeyPoints(it, width, height)}
+    fun convertPersonsToPunchIndices(personList: List<Person>,
+                                     sampleSize: Int = 30,
+                                     step: Int = 30) : List<Int> {
+        val pointsList = personList.map{extractKeyPoints(it, TARGET_WIDTH, TARGET_HEIGHT)}
         // Log.d(TAG, "processPunches: pointsList = $pointsList")
         val winPointsList = pointsList.windowed(sampleSize, step, partialWindows = false)
         val winPredicted = winPointsList.map{ punchClassifier.classify(it) }
         val numBatches = personList.size / sampleSize
         for (i in 0 until numBatches) { punchIdxList.addAll(winPredicted[i]) }
-        val punchBounds = punchIdxList.splitByZeros()
-
-        for (pair in punchBounds){
-            punchList.add(Punch.fromBounds(punchIdxList, pair))
-        }
+        return punchIdxList
 //        sharedViewModel.setPunchList(punchList)
 
+    }
+
+    fun convertIndicesToPunch(): List<Punch>{
+        val punchBounds = punchIdxList.splitByZeros()
+        for (pair in punchBounds){
+            punchList.add(fromBounds(punchIdxList, pair))
+        }
+        // return punchList
+        return listOf(Punch(punchTypeIndex = 1))
     }
 
     /** Extract key points from Person and prepare for tflite model prediction:
@@ -51,11 +57,12 @@ class PersonToPunchConverter(application: Application) {
     }
 
     companion object {
+        @Volatile
         private var INSTANCE: PersonToPunchConverter? = null
 
-        fun getInstance(application: Application): PersonToPunchConverter {
+        fun getInstance(context: Context): PersonToPunchConverter {
             return INSTANCE ?: synchronized(this) {
-                val instance  = PersonToPunchConverter(application)
+                val instance  = PersonToPunchConverter(context)
                 INSTANCE = instance
                 instance
             }

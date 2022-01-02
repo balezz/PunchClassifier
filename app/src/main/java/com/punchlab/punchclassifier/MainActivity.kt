@@ -9,7 +9,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.punchlab.punchclassifier.ui.SharedViewModel
 
-
+/*
+* TODO
+*  Fix videos name
+*  Add video previews
+*
+* */
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var navController: NavController

@@ -141,7 +141,7 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
             cropRegion = determineRectF(keyPoints, bitmap.width, bitmap.height)
         }
         lastInferenceTimeNanos = SystemClock.elapsedRealtimeNanos() - inferenceStartTimeNanos
-        return Person(keyPoints, totalScore / numKeyPoints)
+        return Person(0, keyPoints, totalScore / numKeyPoints, 0)
     }
 
 

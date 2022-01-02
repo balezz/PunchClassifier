@@ -12,8 +12,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.recyclerview.widget.RecyclerView
 import com.punchlab.punchclassifier.R
 import com.punchlab.punchclassifier.data.Punch
-
-const val TAG = "PunchApplication"
+import com.punchlab.punchclassifier.data.PunchClass
 
 class PunchListAdapter(val context: Context, punchList: List<Punch>
 ) : RecyclerView.Adapter<PunchListAdapter.PunchViewHolder>() {
@@ -22,13 +21,12 @@ class PunchListAdapter(val context: Context, punchList: List<Punch>
 
     class PunchViewHolder(view: View): RecyclerView.ViewHolder(view){
         val punchImage: ImageView = view.findViewById(R.id.image_punch)
-        val punchName: TextView = view.findViewById(R.id.text_name)
-        val punchDuration: TextView = view.findViewById(R.id.text_duration)
+        val punchName: TextView = view.findViewById(R.id.punch_name)
+        val punchDuration: TextView = view.findViewById(R.id.punch_duration)
         val punchQuality: TextView = view.findViewById(R.id.text_quality)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PunchViewHolder {
-
         val adapterLayout = LayoutInflater.from(parent.context).inflate(
             R.layout.punch_item, parent, false)
 
@@ -37,7 +35,6 @@ class PunchListAdapter(val context: Context, punchList: List<Punch>
 
     override fun onBindViewHolder(holder: PunchViewHolder, position: Int) {
         val punch = data[position]
-        Log.d(TAG, "Binding $punch")
         val imageResource = when (punch.punchTypeIndex) {
             1 -> R.drawable.punch_1
             2 -> R.drawable.punch_2
@@ -52,7 +49,7 @@ class PunchListAdapter(val context: Context, punchList: List<Punch>
         val roundedDrawable = RoundedBitmapDrawableFactory.create(context.resources, src)
         roundedDrawable.cornerRadius = src.width / 2f
         holder.punchImage.setImageDrawable(roundedDrawable)
-        holder.punchName.text = punch.name
+        holder.punchName.text = PunchClass.fromInt(punch.punchTypeIndex).toString()
 
         val resources = context.resources
         holder.punchDuration.text =

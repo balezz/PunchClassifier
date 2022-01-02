@@ -1,62 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="4dp">
+    android:layout_margin="16dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/image_punch"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:scaleType="centerCrop"
 
-        <ImageView
-            android:id="@+id/image_punch"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:scaleType="centerCrop"
+        app:layout_constraintCircleRadius="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/punch_1" />
 
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+    <TextView
+        android:id="@+id/punch_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
-            app:srcCompat="@drawable/punch_1"
-            />
+        android:paddingStart="8dp"
+        android:text="@string/punch_type"
 
-        <TextView
-            android:id="@+id/text_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/punch_type"
-            android:paddingStart="8dp"
-            tools:text = "Punch Type"
-            app:layout_constraintTop_toTopOf="@id/image_punch"
-            app:layout_constraintStart_toEndOf="@id/image_punch"
-            />
+        app:layout_constraintStart_toEndOf="@id/image_punch"
+        app:layout_constraintTop_toTopOf="@id/image_punch"
+        tools:text="Punch Type" />
 
-        <TextView
-            android:id="@+id/text_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:paddingStart="8dp"
-            tools:text = "Duration"
-            app:layout_constraintTop_toBottomOf="@+id/text_name"
-            app:layout_constraintStart_toEndOf="@id/image_punch"
-            />
+    <TextView
+        android:id="@+id/punch_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
-        <TextView
-            android:id="@+id/text_quality"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:paddingStart="8dp"
-            tools:text = "Quality"
-            app:layout_constraintTop_toBottomOf="@+id/text_duration"
-            app:layout_constraintStart_toEndOf="@id/image_punch"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:paddingStart="8dp"
+        android:text="Duration"
 
-</com.google.android.material.card.MaterialCardView>
+        app:layout_constraintStart_toEndOf="@id/image_punch"
+        app:layout_constraintTop_toBottomOf="@+id/punch_name"
+        tools:text="Duration" />
+
+    <TextView
+        android:id="@+id/text_quality"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:paddingStart="8dp"
+        android:text="TextView"
+
+        app:layout_constraintStart_toEndOf="@id/image_punch"
+        app:layout_constraintTop_toBottomOf="@+id/punch_duration"
+        tools:text="Quality" />
+</androidx.constraintlayout.widget.ConstraintLayout>

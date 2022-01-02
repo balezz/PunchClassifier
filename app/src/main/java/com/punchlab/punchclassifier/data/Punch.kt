@@ -1,29 +1,29 @@
 package com.punchlab.punchclassifier.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "punches")
 data class Punch(
+    @PrimaryKey(autoGenerate = true)
+    val punchId: Long = 0,
+
     val punchTypeIndex: Int,
-    val duration: Int,
-    val quality: Int){
-    val name: String = PunchClass.fromInt(punchTypeIndex).toString()
 
-    override fun toString(): String {
-        return "${PunchClass.fromInt(punchTypeIndex)}, duration: $duration, quality: $quality"
-    }
+    var videoSampleId: Long = 0,
+    var duration: Int = 0,
+    var quality: Int = 0)
 
-    companion object{
-        fun fromBounds(punchIdxs: List<Int>, bounds: Pair<Int, Int>) : Punch {
-            val startTime: Double = bounds.first * 0.03333
-            val duration: Int = (bounds.second - bounds.first) * 33
-            val punchIndex: Int = punchIdxs
-                .slice(bounds.first .. bounds.second)
-                .groupBy { it }
-                .mapValues { it.value.size }
-                .maxByOrNull { it.value }!!.key
-            return Punch(punchIndex, duration, 85)
-        }
-    }
 
+fun fromBounds(punchIdxs: List<Int>, bounds: Pair<Int, Int>) : Punch {
+    val startTime: Double = bounds.first * 0.03333
+    val duration: Int = (bounds.second - bounds.first) * 33
+    val punchIndex: Int = punchIdxs
+        .slice(bounds.first .. bounds.second)
+        .groupBy { it }
+        .mapValues { it.value.size }
+        .maxByOrNull { it.value }!!.key
+    return Punch(punchTypeIndex = punchIndex, duration =  duration, quality =  85)
 }
 
 enum class PunchClass(val position: Int) {
