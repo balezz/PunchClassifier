@@ -1,19 +1,16 @@
 package com.punchlab.punchclassifier
 
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.punchlab.punchclassifier.ui.SharedViewModel
 
 /*
 * TODO
 *  Fix videos name
 *  Add video previews
-*
+*  Add work in progress
 * */
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
@@ -25,6 +22,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         setupActionBarWithNavController(navController)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
 }
