@@ -2,6 +2,7 @@ package com.punchlab.punchclassifier.converters
 
 import android.content.Context
 import android.graphics.PointF
+import androidx.lifecycle.MutableLiveData
 import com.punchlab.punchclassifier.TARGET_HEIGHT
 import com.punchlab.punchclassifier.TARGET_WIDTH
 import com.punchlab.punchclassifier.converters.ConverterUtils.splitByZeros
@@ -16,6 +17,8 @@ class PersonToPunchConverter(context: Context) {
 
     private val punchIdxList = mutableListOf<Int>()
     private val punchList = mutableListOf<Punch>()
+
+    val progress = MutableLiveData(0)
 
     fun convertPersonsToPunchIndices(personList: List<Person>,
                                      sampleSize: Int = 30,
@@ -36,8 +39,8 @@ class PersonToPunchConverter(context: Context) {
         for (pair in punchBounds){
             punchList.add(fromBounds(punchIdxList, pair))
         }
-        // return punchList
-        return listOf(Punch(punchTypeIndex = 1))
+         return punchList
+//        return listOf(Punch(punchTypeIndex = 1))
     }
 
     /** Extract key points from Person and prepare for tflite model prediction:

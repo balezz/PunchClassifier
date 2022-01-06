@@ -11,18 +11,27 @@
             type="com.punchlab.punchclassifier.ui.SharedViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!-- Linear progress indicator -->
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progress_bar"
+<!--        <com.google.android.material.progressindicator.LinearProgressIndicator-->
+<!--            android:id="@+id/progress_bar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:max="100"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+        <TextView
+            android:id="@+id/no_punch_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:text="@string/empty_punch_list"
+            android:gravity="center"
+            />
+<!--            android:visibility="gone"-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/punch_recycler_view"
@@ -31,7 +40,32 @@
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:orientation="horizontal"
+            >
+
+            <ProgressBar
+                android:id="@+id/progress_bar_low"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_margin="8dp"
+                />
+
+            <Button
+                android:id="@+id/cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel_work"
+                android:layout_margin="8dp"
+                />
+
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </layout>

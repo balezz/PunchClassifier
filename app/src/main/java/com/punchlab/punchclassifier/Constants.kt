@@ -1,9 +1,9 @@
 package com.punchlab.punchclassifier
 
 const val KEY_VIDEO_URI = "VideoUri"
-const val KEY_PERSON_LIST = "PersonList"
 
-const val TAG_OUTPUT = "PersonsToPunches"
+const val WORKER_TAG = "Worker"
+const val KEY_PROGRESS = "WorkerProgress"
 const val TIMEOUT_US = 1000L
 
 const val TARGET_WIDTH = 192

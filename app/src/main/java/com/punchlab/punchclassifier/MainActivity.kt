@@ -10,7 +10,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 * TODO
 *  Fix videos name
 *  Add video previews
-*  Add work in progress
+*  Show empty punch list
 * */
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 

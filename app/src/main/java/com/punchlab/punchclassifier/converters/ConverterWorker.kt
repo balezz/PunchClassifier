@@ -2,6 +2,7 @@ package com.punchlab.punchclassifier.converters
 
 import android.content.Context
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -11,13 +12,19 @@ import com.punchlab.punchclassifier.data.Punch
 import com.punchlab.punchclassifier.data.VideoSample
 import com.punchlab.punchclassifier.database.PersonPunchDatabase
 import kotlinx.coroutines.runBlocking
+import java.lang.Exception
 
 class ConverterWorker(context: Context, params: WorkerParameters): Worker(context, params) {
     override fun doWork(): Result {
         val appContext = applicationContext
         val uriString = inputData.getString(KEY_VIDEO_URI)
         val uri = Uri.parse(uriString)
-        val pfd = appContext.contentResolver.openFileDescriptor(uri, "r")!!
+        val pfd:ParcelFileDescriptor?
+        try {
+            pfd = appContext.contentResolver.openFileDescriptor(uri, "r")!!
+        } catch (e: Exception) {
+            return Result.failure()
+        }
         val converterPerson = VideoToPersonFrameConverter.getInstance(appContext)
         val personList = converterPerson.syncProcessing(pfd)
 

@@ -9,6 +9,7 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.punchlab.punchclassifier.TARGET_HEIGHT
 import com.punchlab.punchclassifier.TARGET_WIDTH
 import com.punchlab.punchclassifier.TIMEOUT_US
@@ -34,6 +35,8 @@ class VideoToPersonFrameConverter(context: Context) {
     private var frameTotalNumber = -1
 
     val personList = mutableListOf<Person>()
+    val progress = MutableLiveData(0)
+
 
     fun syncProcessing(fd: ParcelFileDescriptor): List<Person>{
         personList.clear()
@@ -45,6 +48,7 @@ class VideoToPersonFrameConverter(context: Context) {
 
         // We need some extra loops to guarantee process all frames, so frameTotalNumber*2
         for (frame in 0 .. frameTotalNumber*2){
+            progress.postValue(frame )
             val inBufferId = codec.dequeueInputBuffer(TIMEOUT_US)
             if (inBufferId >= 0){
                 val inBuffer = codec.getInputBuffer(inBufferId)

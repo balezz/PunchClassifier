@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
 import com.punchlab.punchclassifier.PunchApplication
 import com.punchlab.punchclassifier.data.Punch
 import com.punchlab.punchclassifier.databinding.FragmentPunchListBinding
@@ -22,10 +23,10 @@ class PunchListFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels{
         SharedViewModel.SharedViewModelFactory(activity?.application!! as PunchApplication)
     }
-    private var binding: FragmentPunchListBinding? = null
+    private lateinit var binding: FragmentPunchListBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var videoUriString: String
-    private var punchList: List<Punch>? = null
+    private lateinit var punchList: List<Punch>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,38 +39,62 @@ class PunchListFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPunchListBinding
                                     .inflate(inflater, container, false)
 
-        val progressObserver = Observer<Int> {
-            binding!!.progressBar.setProgressCompat(it, true)
-        }
-        sharedViewModel.progress.observe(viewLifecycleOwner, progressObserver)
+        sharedViewModel.outputWorkInfos.observe(viewLifecycleOwner, workInfosObserver())
 
-        val notificationObserver = Observer<String> {
-            if (it.isNotEmpty())
-                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-        }
-        sharedViewModel.notification.observe(viewLifecycleOwner, notificationObserver)
-
-        return binding?.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = binding!!.punchRecyclerView
+        recyclerView = binding.punchRecyclerView
 
         val punchListObserver = Observer<List<Punch>> {
-            punchList = sharedViewModel.punchList.value
+            punchList = sharedViewModel.punchList.value!!
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = PunchListAdapter(requireContext(), punchList!!)
         }
         sharedViewModel.punchList.observe(viewLifecycleOwner, punchListObserver)
 
-        binding?.apply {
+        binding.apply {
             viewModel = sharedViewModel
         }
+
         sharedViewModel.startProcessing()
     }
+
+    private fun workInfosObserver(): Observer<List<WorkInfo>> {
+        return Observer {
+            if (it.isNullOrEmpty())
+                return@Observer
+            val workInfo = it[0]
+            if (workInfo.state.isFinished) {
+                showWorkFinished()
+            }
+            else
+                showWorkInProgress()
+        }
+    }
+
+    private fun showWorkFinished(){
+        with(binding) {
+            progressBarLow.visibility = View.GONE
+            cancelButton.visibility = View.GONE
+            if (punchList.isEmpty()) noPunchText.text = "No one punch in this video"
+            else noPunchText.visibility = View.GONE
+        }
+    }
+
+    private fun showWorkInProgress(){
+        with(binding) {
+            progressBarLow.visibility = View.VISIBLE
+            cancelButton.visibility = View.VISIBLE
+            noPunchText.text = "Video processing, please wait"
+            noPunchText.visibility = View.VISIBLE
+        }
+    }
+
 }

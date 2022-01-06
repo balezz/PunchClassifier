@@ -20,4 +20,6 @@
     <string name="punch_video_sample">Punch video sample</string>
     <string name="_0s">0s</string>
     <string name="video_uri">Video uri</string>
+    <string name="cancel_work">Cancel</string>
+    <string name="empty_punch_list">No punches in this video</string>
 </resources>
