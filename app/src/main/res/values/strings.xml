@@ -22,4 +22,5 @@
     <string name="video_uri">Video uri</string>
     <string name="cancel_work">Cancel</string>
     <string name="empty_punch_list">No punches in this video</string>
+    <string name="processing_message">Video is processing, please wait</string>
 </resources>

@@ -2,22 +2,22 @@ package com.punchlab.punchclassifier.ui
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.punchlab.punchclassifier.R
 import com.punchlab.punchclassifier.data.Punch
 import com.punchlab.punchclassifier.data.PunchClass
 
-class PunchListAdapter(val context: Context, punchList: List<Punch>
-) : RecyclerView.Adapter<PunchListAdapter.PunchViewHolder>() {
 
-    val data = punchList
+class PunchListAdapter(val context: Context) :
+    ListAdapter<Punch, PunchListAdapter.PunchViewHolder>(DiffCallback) {
 
     class PunchViewHolder(view: View): RecyclerView.ViewHolder(view){
         val punchImage: ImageView = view.findViewById(R.id.image_punch)
@@ -34,7 +34,7 @@ class PunchListAdapter(val context: Context, punchList: List<Punch>
     }
 
     override fun onBindViewHolder(holder: PunchViewHolder, position: Int) {
-        val punch = data[position]
+        val punch = getItem(position)
         val imageResource = when (punch.punchTypeIndex) {
             1 -> R.drawable.punch_1
             2 -> R.drawable.punch_2
@@ -58,7 +58,16 @@ class PunchListAdapter(val context: Context, punchList: List<Punch>
             resources?.getString(R.string.quality, punch.quality.toString())
     }
 
-    override fun getItemCount(): Int {
-        return data?.size ?: 0
+    companion object {
+        private val DiffCallback = object : DiffUtil.ItemCallback<Punch>(){
+            override fun areItemsTheSame(oldItem: Punch, newItem: Punch): Boolean {
+                return oldItem.punchId == newItem.punchId
+            }
+
+            override fun areContentsTheSame(oldItem: Punch, newItem: Punch): Boolean {
+                return oldItem.punchTypeIndex == newItem.punchTypeIndex
+            }
+        }
     }
+
 }

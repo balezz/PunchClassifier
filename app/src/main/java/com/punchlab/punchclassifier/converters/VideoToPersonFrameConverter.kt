@@ -10,9 +10,8 @@ import android.media.MediaFormat
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.punchlab.punchclassifier.TARGET_HEIGHT
+import com.punchlab.punchclassifier.*
 import com.punchlab.punchclassifier.TARGET_WIDTH
-import com.punchlab.punchclassifier.TIMEOUT_US
 import com.punchlab.punchclassifier.data.Device
 import com.punchlab.punchclassifier.data.Person
 import com.punchlab.punchclassifier.ml.ModelType
@@ -33,6 +32,7 @@ class VideoToPersonFrameConverter(context: Context) {
     private var frameWidth: Int = -1
     private var frameHeight: Int = -1
     private var frameTotalNumber = -1
+    var mThumbnail: Bitmap? = null
 
     val personList = mutableListOf<Person>()
     val progress = MutableLiveData(0)
@@ -112,7 +112,7 @@ class VideoToPersonFrameConverter(context: Context) {
         val rotatedBitmap = Bitmap.createBitmap(
             scaledBitmap, 0, 0, TARGET_WIDTH, TARGET_HEIGHT, rotateMatrix, false
         )
-
+        if (mThumbnail == null) mThumbnail = rotatedBitmap
         val person = poseDetector.estimateSinglePose(rotatedBitmap)
         personList.add(person)
     }

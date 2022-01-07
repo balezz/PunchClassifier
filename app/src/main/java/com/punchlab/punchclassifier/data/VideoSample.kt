@@ -1,6 +1,7 @@
 package com.punchlab.punchclassifier.data
 
 import android.graphics.Bitmap
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -12,4 +13,8 @@ data class VideoSample(
 
     val uri: String,
 
-    val duration: Int)
+    val duration: Int,
+
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    val image: ByteArray
+    )

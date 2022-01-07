@@ -9,7 +9,7 @@ import com.punchlab.punchclassifier.data.Person
 import com.punchlab.punchclassifier.data.Punch
 import com.punchlab.punchclassifier.data.VideoSample
 
-@Database(entities = [Person::class, VideoSample::class, Punch::class], version = 5, exportSchema = false)
+@Database(entities = [Person::class, VideoSample::class, Punch::class], version = 6, exportSchema = false)
 @TypeConverters(PersonConverters::class)
 abstract class PersonPunchDatabase : RoomDatabase() {
     abstract fun personDao(): PersonDao

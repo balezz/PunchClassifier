@@ -1,5 +1,6 @@
 package com.punchlab.punchclassifier.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,57 +15,52 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
 import com.punchlab.punchclassifier.PunchApplication
-import com.punchlab.punchclassifier.data.Punch
+import com.punchlab.punchclassifier.R
+import com.punchlab.punchclassifier.VIDEO_LIMIT_S
 import com.punchlab.punchclassifier.data.VideoSample
 import com.punchlab.punchclassifier.databinding.FragmentVideoListBinding
 
 
 class VideoListFragment : Fragment() {
 
-    private var binding: FragmentVideoListBinding? = null
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var videoList: List<VideoSample>
+    private lateinit var binding: FragmentVideoListBinding
+    private lateinit var alertDialog : AlertDialog
+    private var currentUriString = ""
 
     private val sharedViewModel: SharedViewModel by activityViewModels{
         SharedViewModel.SharedViewModelFactory(activity?.application!! as PunchApplication)
     }
 
-    private val getVideo = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()){ activityResult ->
-            val intent = activityResult.data
-            intent?.let {
-                val uri = it.data!!
-                val action = VideoListFragmentDirections
-                    .actionStartFragmentToPunchListFragment(uri.toString())
-                findNavController().navigate(action)
-            }
-        }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         binding = FragmentVideoListBinding.inflate(inflater, container, false)
-        return binding?.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = binding!!.videoRecyclerView
+        val adapter = VideoListAdapter{
+            val action = VideoListFragmentDirections
+                .actionStartFragmentToPunchListFragment(it.uri)
+            findNavController().navigate(action)
+        }
+        binding.videoRecyclerView.adapter = adapter
+        binding.videoRecyclerView.layoutManager = LinearLayoutManager(context)
 
         val videoListObserver = Observer<List<VideoSample>> {
-            videoList = sharedViewModel.allVideoSamples.value!!
-            recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = VideoListAdapter(videoList){
-                sharedViewModel.getPunchListFromDatabase(it.videoId)
-                val action = VideoListFragmentDirections
-                    .actionStartFragmentToPunchListFragment(it.uri)
-                findNavController().navigate(action)
-            }
+            adapter.submitList(it)
         }
         sharedViewModel.allVideoSamples.observe(viewLifecycleOwner, videoListObserver)
 
-        binding?.apply {
+        val builder = activity.let { AlertDialog.Builder(it) }
+        builder
+            .setMessage(R.string.processing_message)
+        alertDialog = builder.create()
+
+        binding.apply {
             viewModel = sharedViewModel
             fabRecord.setOnClickListener{ dispatchRecordVideoIntent() }
             fabOpen.setOnClickListener { dispatchOpenVideoIntent() }
@@ -79,7 +75,48 @@ class VideoListFragment : Fragment() {
 
     private fun dispatchRecordVideoIntent() {
         val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 5)
+        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, VIDEO_LIMIT_S)
         getVideo.launch(intent)
     }
+
+    private val getVideo = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()){ activityResult ->
+        val intent = activityResult.data
+        intent?.let {
+            val uri = it.data!!
+            currentUriString = uri.toString()
+            sharedViewModel.startProcessing(uri)
+            sharedViewModel.outputWorkInfo.observe(viewLifecycleOwner, workInfoObserver())
+        }
+    }
+
+    private fun workInfoObserver(): Observer<WorkInfo> {
+        return Observer {
+            Log.d(TAG, it.state.toString())
+            if (it.state == WorkInfo.State.RUNNING) {
+                showWorkInProgress()
+            }
+            if (it.state.isFinished){
+                showWorkFinished()
+            }
+        }
+    }
+
+    private fun showWorkFinished() {
+        Log.d(TAG, "Work is finished")
+        alertDialog.dismiss()
+        val action = VideoListFragmentDirections
+            .actionStartFragmentToPunchListFragment(currentUriString)
+        findNavController().navigate(action)
+    }
+
+    private fun showWorkInProgress() {
+        Log.d(TAG, "Work in progress")
+        alertDialog.show()
+    }
+
+    companion object{
+        const val TAG = "VideoListFragment"
+    }
+
 }
