@@ -20,28 +20,28 @@ class ConverterWorker(context: Context, params: WorkerParameters): Worker(contex
     override fun doWork(): Result {
         val appContext = applicationContext
         val uriString = inputData.getString(KEY_VIDEO_URI)
-
         val videoUri = Uri.parse(uriString)
         val pfd:ParcelFileDescriptor?
+
         try {
             pfd = appContext.contentResolver.openFileDescriptor(videoUri, "r")!!
+
+            val converterPerson = VideoToPersonFrameConverter.getInstance(appContext)
+            val personList = converterPerson.syncProcessing(pfd)
+
+            Log.d(TAG, "Person list size: ${personList.size}")
+
+            val converterPunch = PersonToPunchConverter.getInstance(appContext)
+            val punchIndexes = converterPunch.convertPersonsToPunchIndices(personList)
+            val punchList = converterPunch.convertIndicesToPunch(punchIndexes)
+
+            Log.d(TAG, "Punch Indexes: $punchIndexes")
+
+            val imageBytes = getThumb(converterPerson.mThumbnail!!)
+            insertInDatabase(uriString, imageBytes, personList, punchList)
         } catch (e: Exception) {
             return Result.failure()
         }
-
-        val converterPerson = VideoToPersonFrameConverter.getInstance(appContext)
-        val personList = converterPerson.syncProcessing(pfd)
-
-        Log.d(TAG, "Person list size: ${personList.size}")
-
-        val converterPunch = PersonToPunchConverter.getInstance(appContext)
-        val punchIndexes = converterPunch.convertPersonsToPunchIndices(personList)
-        val punchList = converterPunch.convertIndicesToPunch(punchIndexes)
-
-        Log.d(TAG, "Punch Indexes: $punchIndexes")
-
-        val imageBytes = getThumb(converterPerson.mThumbnail!!)
-        insertInDatabase(uriString, imageBytes, personList, punchList)
         return Result.success()
     }
 
