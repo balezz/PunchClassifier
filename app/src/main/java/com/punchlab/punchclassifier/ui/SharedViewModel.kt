@@ -71,7 +71,9 @@ class SharedViewModel(private val application: PunchApplication): ViewModel() {
     fun setPunchListByUri(uriString: String) {
         viewModelScope.launch {
             val videoSample = videoSampleDao.getVideoSampleByUri(uriString)
-            punchList.value = punchDao.getPunchListByVideoId(videoSample.videoId)
+            videoSample.let {
+                punchList.value = punchDao.getPunchListByVideoId(videoSample.videoId)
+            }
         }
     }
 

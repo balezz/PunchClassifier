@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.punchlab.punchclassifier.KEY_VIDEO_URI
@@ -16,8 +17,9 @@ import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 import java.lang.Exception
 
-class ConverterWorker(context: Context, params: WorkerParameters): Worker(context, params) {
-    override fun doWork(): Result {
+class ConverterWorker(context: Context, params: WorkerParameters):
+    CoroutineWorker(context, params) {
+    override suspend fun doWork(): Result {
         val appContext = applicationContext
         val uriString = inputData.getString(KEY_VIDEO_URI)
         val videoUri = Uri.parse(uriString)
