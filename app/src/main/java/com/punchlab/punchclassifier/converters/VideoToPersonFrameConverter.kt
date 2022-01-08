@@ -40,6 +40,7 @@ class VideoToPersonFrameConverter(context: Context) {
 
     fun syncProcessing(fd: ParcelFileDescriptor): List<Person>{
         personList.clear()
+        mThumbnail = null
 
         val codec = MediaCodec.createDecoderByType("video/avc")
         val extractor = buildExtractor(fd)
@@ -71,7 +72,6 @@ class VideoToPersonFrameConverter(context: Context) {
                 Log.d(TAG, "release buffer # $outBufferId")
                 }
             }
-
         codec.stop()
         codec.release()
         return personList

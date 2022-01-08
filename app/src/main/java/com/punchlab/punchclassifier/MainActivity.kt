@@ -9,8 +9,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 /*
 * TODO
 *  Fix videos name
-*  Add video previews
-*  Show empty punch list
+*  Add progress bar
+*  Fix video rotation bug
 * */
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 

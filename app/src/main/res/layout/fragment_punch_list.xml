@@ -30,6 +30,7 @@
             android:layout_height="match_parent"
             android:text="@string/empty_punch_list"
             android:gravity="center"
+            android:visibility="gone"
             />
 <!--            android:visibility="gone"-->
 

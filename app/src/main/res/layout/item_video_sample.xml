@@ -7,7 +7,9 @@
     android:layout_height="wrap_content"
     android:layout_margin="16dp">
 
-    <ImageView
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
         android:id="@+id/image_video_sample"
         android:layout_width="64dp"
         android:layout_height="64dp"

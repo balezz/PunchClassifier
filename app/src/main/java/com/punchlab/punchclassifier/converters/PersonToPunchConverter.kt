@@ -15,14 +15,10 @@ class PersonToPunchConverter(context: Context) {
 
     private val punchClassifier = PunchRnnClassifier.create(context)
 
-    private val punchIdxList = mutableListOf<Int>()
-    private val punchList = mutableListOf<Punch>()
-
-    val progress = MutableLiveData(0)
-
     fun convertPersonsToPunchIndices(personList: List<Person>,
                                      sampleSize: Int = 30,
                                      step: Int = 30) : List<Int> {
+        val punchIdxList = mutableListOf<Int>()
         val pointsList = personList.map{extractKeyPoints(it, TARGET_WIDTH, TARGET_HEIGHT)}
         // Log.d(TAG, "processPunches: pointsList = $pointsList")
         val winPointsList = pointsList.windowed(sampleSize, step, partialWindows = false)
@@ -30,17 +26,16 @@ class PersonToPunchConverter(context: Context) {
         val numBatches = personList.size / sampleSize
         for (i in 0 until numBatches) { punchIdxList.addAll(winPredicted[i]) }
         return punchIdxList
-//        sharedViewModel.setPunchList(punchList)
-
     }
 
-    fun convertIndicesToPunch(): List<Punch>{
+    fun convertIndicesToPunch(punchIdxList: List<Int>): List<Punch>{
+        val punchList = mutableListOf<Punch>()
         val punchBounds = punchIdxList.splitByZeros()
         for (pair in punchBounds){
             punchList.add(fromBounds(punchIdxList, pair))
         }
          return punchList
-//        return listOf(Punch(punchTypeIndex = 1))
+//        return listOf(Punch(punchTypeIndex = 1))    // mock return
     }
 
     /** Extract key points from Person and prepare for tflite model prediction:

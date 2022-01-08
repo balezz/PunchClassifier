@@ -45,7 +45,11 @@ class PunchListFragment : Fragment() {
         binding.punchRecyclerView.adapter = adapter
 
         val punchListObserver = Observer<List<Punch>> {
-            if (it.isNullOrEmpty()) return@Observer
+            if (it.isNullOrEmpty())
+                binding.noPunchText.visibility = View.VISIBLE
+            else
+                binding.noPunchText.visibility = View.GONE
+
             adapter.submitList(it)
         }
         sharedViewModel.punchList.observe(viewLifecycleOwner, punchListObserver)
