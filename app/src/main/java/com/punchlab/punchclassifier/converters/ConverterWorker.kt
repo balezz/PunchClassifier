@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.punchlab.punchclassifier.KEY_VIDEO_URI
 import com.punchlab.punchclassifier.data.Person
 import com.punchlab.punchclassifier.data.Punch
@@ -24,7 +25,7 @@ class ConverterWorker(context: Context, params: WorkerParameters):
         val uriString = inputData.getString(KEY_VIDEO_URI)
         val videoUri = Uri.parse(uriString)
         val pfd:ParcelFileDescriptor?
-
+        setProgress(workDataOf("Progress" to 10))
         try {
             pfd = appContext.contentResolver.openFileDescriptor(videoUri, "r")!!
 
@@ -32,7 +33,7 @@ class ConverterWorker(context: Context, params: WorkerParameters):
             val personList = converterPerson.syncProcessing(pfd)
 
             Log.d(TAG, "Person list size: ${personList.size}")
-
+            setProgress(workDataOf("Progress" to 80))
             val converterPunch = PersonToPunchConverter.getInstance(appContext)
             val punchIndexes = converterPunch.convertPersonsToPunchIndices(personList)
             val punchList = converterPunch.convertIndicesToPunch(punchIndexes)
@@ -41,6 +42,8 @@ class ConverterWorker(context: Context, params: WorkerParameters):
 
             val imageBytes = getThumb(converterPerson.mThumbnail!!)
             insertInDatabase(uriString, imageBytes, personList, punchList)
+
+            setProgress(workDataOf("Progress" to 90))
         } catch (e: Exception) {
             return Result.failure()
         }

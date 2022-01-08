@@ -3,7 +3,6 @@ package com.punchlab.punchclassifier.ui
 import android.net.Uri
 import androidx.lifecycle.*
 import androidx.work.*
-import com.google.common.util.concurrent.ListenableFuture
 import com.punchlab.punchclassifier.data.Punch
 import com.punchlab.punchclassifier.KEY_VIDEO_URI
 import com.punchlab.punchclassifier.PunchApplication
@@ -11,7 +10,6 @@ import com.punchlab.punchclassifier.converters.ConverterWorker
 import com.punchlab.punchclassifier.data.VideoSample
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
-import kotlin.coroutines.coroutineContext
 
 class SharedViewModel(private val application: PunchApplication): ViewModel() {
 
@@ -20,17 +18,15 @@ class SharedViewModel(private val application: PunchApplication): ViewModel() {
     private val punchDao = application.database.punchDao()
     lateinit var outputWorkInfo: LiveData<WorkInfo>
 
-    val allVideoSamples:
+    val videoSamplesList:
             LiveData<List<VideoSample>> = videoSampleDao.getVideoSamples().asLiveData()
 
     var punchList = MutableLiveData<List<Punch>>()
 
-//    private var currentVideoUri: String? = null
-//    fun setCurrentVideoUri(uriString: String){ currentVideoUri = uriString }
 
     fun startProcessing(uri: Uri) {
         val uriString = uri.toString()
-        for (vs in allVideoSamples.value!!){
+        for (vs in videoSamplesList.value!!){
             if (vs.uri == uriString) return
         }
         startWorker(uri)
@@ -53,12 +49,6 @@ class SharedViewModel(private val application: PunchApplication): ViewModel() {
         return builder.build()
     }
 
-//    fun getPunchListFromDatabase(videoId: Long) {
-//        viewModelScope.launch {
-//            punchList.value = punchDao.getPunchListByVideoId(videoId)
-//        }
-//    }
-
     fun stopProcessing() {
         try {
             workManager.cancelAllWork()
@@ -71,7 +61,7 @@ class SharedViewModel(private val application: PunchApplication): ViewModel() {
     fun setPunchListByUri(uriString: String) {
         viewModelScope.launch {
             val videoSample = videoSampleDao.getVideoSampleByUri(uriString)
-            videoSample.let {
+            videoSample?.let {
                 punchList.value = punchDao.getPunchListByVideoId(videoSample.videoId)
             }
         }

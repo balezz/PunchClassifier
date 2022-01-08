@@ -14,7 +14,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
 import com.punchlab.punchclassifier.PunchApplication
 import com.punchlab.punchclassifier.R
@@ -53,11 +52,13 @@ class VideoListFragment : Fragment() {
         val videoListObserver = Observer<List<VideoSample>> {
             adapter.submitList(it)
         }
-        sharedViewModel.allVideoSamples.observe(viewLifecycleOwner, videoListObserver)
+        sharedViewModel.videoSamplesList.observe(viewLifecycleOwner, videoListObserver)
 
         val builder = activity.let { AlertDialog.Builder(it) }
         builder
             .setMessage(R.string.processing_message)
+            .setPositiveButton(R.string.cancel_work){ d, w -> sharedViewModel.stopProcessing() }
+
         alertDialog = builder.create()
 
         binding.apply {
@@ -93,8 +94,10 @@ class VideoListFragment : Fragment() {
     private fun workInfoObserver(): Observer<WorkInfo> {
         return Observer {
             Log.d(TAG, it.state.toString())
+            val progress = it.progress.getInt("Progress", 0)
+            Log.d(TAG, "Progress: $progress")
             if (it.state == WorkInfo.State.RUNNING) {
-                showWorkInProgress()
+                showWorkInProgress(progress)
             }
             if (it.state.isFinished){
                 showWorkFinished()
@@ -105,13 +108,16 @@ class VideoListFragment : Fragment() {
     private fun showWorkFinished() {
         Log.d(TAG, "Work is finished")
         alertDialog.dismiss()
+        binding.progressBar.visibility = View.GONE
         val action = VideoListFragmentDirections
             .actionStartFragmentToPunchListFragment(currentUriString)
         findNavController().navigate(action)
     }
 
-    private fun showWorkInProgress() {
+    private fun showWorkInProgress(progress: Int) {
         Log.d(TAG, "Work in progress")
+        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.progress = progress
         alertDialog.show()
     }
 

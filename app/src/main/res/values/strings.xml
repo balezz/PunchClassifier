@@ -23,4 +23,6 @@
     <string name="cancel_work">Cancel</string>
     <string name="empty_punch_list">No punches in this video</string>
     <string name="processing_message">Video is processing, please wait</string>
+    <string name="converting_notification_title">Coverting video</string>
+    <string name="converting_notification_text">Converting video in progress</string>
 </resources>

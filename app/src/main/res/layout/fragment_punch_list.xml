@@ -16,14 +16,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Linear progress indicator -->
-<!--        <com.google.android.material.progressindicator.LinearProgressIndicator-->
-<!--            android:id="@+id/progress_bar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:max="100"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
         <TextView
             android:id="@+id/no_punch_text"
             android:layout_width="match_parent"
