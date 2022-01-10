@@ -16,7 +16,7 @@
         app:layout_constraintCircleRadius="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/punch_1" />
+        app:srcCompat="@drawable/p1_jab" />
 
     <TextView
         android:id="@+id/punch_name"

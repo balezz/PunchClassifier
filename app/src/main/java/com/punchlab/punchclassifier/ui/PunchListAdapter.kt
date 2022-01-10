@@ -36,13 +36,13 @@ class PunchListAdapter(val context: Context) :
     override fun onBindViewHolder(holder: PunchViewHolder, position: Int) {
         val punch = getItem(position)
         val imageResource = when (punch.punchTypeIndex) {
-            1 -> R.drawable.punch_1
-            2 -> R.drawable.punch_2
-            3 -> R.drawable.punch_3
-            4 -> R.drawable.punch_4
-            5 -> R.drawable.punch_5
-            6 -> R.drawable.punch_6
-            else -> R.drawable.punch_0
+            1 -> R.drawable.p1_jab
+            2 -> R.drawable.p2_cross
+            3 -> R.drawable.p3_l_hook
+            4 -> R.drawable.p4_r_hook
+            5 -> R.drawable.p5_l_upper
+            6 -> R.drawable.p6_r_upper
+            else -> R.drawable.icon
         }
 
         val src = BitmapFactory.decodeResource(context.resources, imageResource)
