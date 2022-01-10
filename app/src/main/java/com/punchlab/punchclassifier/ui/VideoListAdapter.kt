@@ -48,7 +48,7 @@ class VideoListAdapter(
 
     private fun formatName(name: String): String{
         val tokens = name.split("/")
-        return tokens.takeLast(2).joinToString { it }
+        return tokens.takeLast(2).joinToString(separator = "#") { it }
     }
 
     companion object {
@@ -62,6 +62,4 @@ class VideoListAdapter(
             }
         }
     }
-
-
 }
