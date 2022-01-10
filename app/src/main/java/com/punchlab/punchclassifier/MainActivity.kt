@@ -8,7 +8,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 
 /*
 * TODO
-*  Fix videos name
 *  Add progress bar
 *  Fix video rotation bug
 * */

@@ -39,10 +39,16 @@ class VideoListAdapter(
     override fun onBindViewHolder(holder: VideoSampleViewHolder, position: Int) {
         val current = getItem(position)
         holder.itemView.setOnClickListener{ onItemClicked(current) }
-        holder.videoName.text = current.uri
+
+        holder.videoName.text = formatName(current.uri)
         holder.videoDuration.text = current.duration.toString()
         val bitmap = BitmapFactory.decodeByteArray(current.image, 0, current.image.size)
         holder.videoImage.setImageBitmap(bitmap)
+    }
+
+    private fun formatName(name: String): String{
+        val tokens = name.split("/")
+        return tokens.takeLast(2).joinToString { it }
     }
 
     companion object {
