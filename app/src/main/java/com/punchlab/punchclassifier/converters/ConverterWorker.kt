@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
-import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -19,21 +18,24 @@ import java.io.ByteArrayOutputStream
 import java.lang.Exception
 
 class ConverterWorker(context: Context, params: WorkerParameters):
-    CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result {
+    Worker(context, params) {
+    override fun doWork(): Result {
         val appContext = applicationContext
         val uriString = inputData.getString(KEY_VIDEO_URI)
         val videoUri = Uri.parse(uriString)
         val pfd:ParcelFileDescriptor?
-        setProgress(workDataOf("Progress" to 10))
+
         try {
             pfd = appContext.contentResolver.openFileDescriptor(videoUri, "r")!!
 
             val converterPerson = VideoToPersonFrameConverter.getInstance(appContext)
+            converterPerson.listener = {
+                setProgressAsync(workDataOf("Progress" to it))
+                Log.d(TAG, "Progress: $it")
+            }
             val personList = converterPerson.syncProcessing(pfd)
 
             Log.d(TAG, "Person list size: ${personList.size}")
-            setProgress(workDataOf("Progress" to 80))
             val converterPunch = PersonToPunchConverter.getInstance(appContext)
             val punchIndexes = converterPunch.convertPersonsToPunchIndices(personList)
             val punchList = converterPunch.convertIndicesToPunch(punchIndexes)
@@ -43,7 +45,6 @@ class ConverterWorker(context: Context, params: WorkerParameters):
             val imageBytes = getThumb(converterPerson.mThumbnail!!)
             insertInDatabase(uriString, imageBytes, personList, punchList)
 
-            setProgress(workDataOf("Progress" to 90))
         } catch (e: Exception) {
             return Result.failure()
         }

@@ -9,13 +9,13 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.os.ParcelFileDescriptor
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.punchlab.punchclassifier.*
 import com.punchlab.punchclassifier.TARGET_WIDTH
 import com.punchlab.punchclassifier.data.Device
 import com.punchlab.punchclassifier.data.Person
 import com.punchlab.punchclassifier.ml.ModelType
 import com.punchlab.punchclassifier.ml.MoveNet
+import java.util.*
 
 
 class VideoToPersonFrameConverter(context: Context) {
@@ -35,8 +35,7 @@ class VideoToPersonFrameConverter(context: Context) {
     var mThumbnail: Bitmap? = null
 
     val personList = mutableListOf<Person>()
-    val progress = MutableLiveData(0)
-
+    var listener: ((Int)->Unit)? = null
 
     fun syncProcessing(fd: ParcelFileDescriptor): List<Person>{
         personList.clear()
@@ -46,10 +45,14 @@ class VideoToPersonFrameConverter(context: Context) {
         val extractor = buildExtractor(fd)
         codec.configure(mOutputFormat, null, null, 0)
         codec.start()
-
-        // We need some extra loops to guarantee process all frames, so frameTotalNumber*2
-        for (frame in 0 .. frameTotalNumber*2){
-            progress.postValue(frame )
+        val updateEvery = frameTotalNumber / 10
+        // We need some extra loops to guarantee process all frames, so frameTotalNumber+8
+        for (frame in 0 .. frameTotalNumber+8){
+            if (frame % updateEvery == 0){
+                val progress = (frame.toFloat() / frameTotalNumber * 100).toInt()
+                listener?.invoke(progress)
+            }
+            //Log.d(TAG, "Progress: $progress")
             val inBufferId = codec.dequeueInputBuffer(TIMEOUT_US)
             if (inBufferId >= 0){
                 val inBuffer = codec.getInputBuffer(inBufferId)

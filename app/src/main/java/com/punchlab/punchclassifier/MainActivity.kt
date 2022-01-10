@@ -8,7 +8,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 
 /*
 * TODO
-*  Add progress bar
+*
 *  Fix video rotation bug
 * */
 class MainActivity : AppCompatActivity(R.layout.activity_main) {

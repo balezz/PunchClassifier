@@ -96,8 +96,12 @@ class VideoListFragment : Fragment() {
             Log.d(TAG, it.state.toString())
             val progress = it.progress.getInt("Progress", 0)
             Log.d(TAG, "Progress: $progress")
+            if (it.state == WorkInfo.State.ENQUEUED){
+                binding.progressBar.visibility = View.VISIBLE
+                alertDialog.show()
+            }
             if (it.state == WorkInfo.State.RUNNING) {
-                showWorkInProgress(progress)
+                binding.progressBar.progress = progress
             }
             if (it.state.isFinished){
                 showWorkFinished()
@@ -112,13 +116,6 @@ class VideoListFragment : Fragment() {
         val action = VideoListFragmentDirections
             .actionStartFragmentToPunchListFragment(currentUriString)
         findNavController().navigate(action)
-    }
-
-    private fun showWorkInProgress(progress: Int) {
-        Log.d(TAG, "Work in progress")
-        binding.progressBar.visibility = View.VISIBLE
-        binding.progressBar.progress = progress
-        alertDialog.show()
     }
 
     companion object{
